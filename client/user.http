@@ -1,0 +1,30 @@
+@baseUrl = http://localhost:3000/user
+
+### Create user
+POST {{baseUrl}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "email" : "tejas@gmail.com",
+    "name" : "Tejas",
+    "dob" : "2001-01-01"
+}
+
+### Update user
+PATCH {{baseUrl}}/69676b2dffe021e70e8f28f6 HTTP/1.1
+Content-Type: application/json
+
+{
+    "email" : "tejas1@gmail.com",
+    "name" : "Tejas",
+    "dob" : "2001-01-01"
+}
+
+### Get all users
+GET {{baseUrl}} HTTP/1.1
+
+### Get one user
+GET {{baseUrl}}/69676b2dffe021e70e8f28f6 HTTP/1.1
+
+### Delete one user
+DELETE  {{baseUrl}}/696ae4132e7346fbfc4997f5 HTTP/1.1
