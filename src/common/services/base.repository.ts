@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
     DeleteResult,
-    HydratedDocument,
     Model,
     ProjectionType,
     QueryFilter,

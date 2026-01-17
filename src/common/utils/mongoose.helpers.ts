@@ -1,10 +1,5 @@
-import mongoose, { SchemaOptions } from 'mongoose';
-
-type BaseSchemaOptions = {
-  toJSON?: SchemaOptions['toJSON'];
-  toObject?: SchemaOptions['toObject'];
-  timestamps?: boolean;
-}
+import mongoose from 'mongoose';
+import { BaseSchemaOptions } from '../types/mongoose.type';
 
 const defaultTransform = ((_doc: any, ret: any) => {
   if (ret?._id) {
@@ -38,3 +33,14 @@ export function applyBaseSchemaOptions(
   // schema.set('timestamps', options?.timestamps ?? { createdAt: 'created_on', updatedAt: 'updated_on' });
   schema.set('timestamps', options?.timestamps ?? true);
 }
+
+export function cleanedDoc<TInput, TReturn>(doc: TInput): TReturn;
+export function cleanedDoc<TInput, TReturn>(docs: TInput[]): TReturn[];
+export function cleanedDoc(docOrDocs: any): any {
+  if (Array.isArray(docOrDocs)) {
+    return docOrDocs.map((doc) => doc?.toJSON());
+  }
+  return docOrDocs?.toJSON();
+}
+
+

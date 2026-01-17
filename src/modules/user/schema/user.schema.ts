@@ -1,14 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { BaseModel } from 'src/common/schema/base.schema';
-import { applyBaseSchemaOptions } from 'src/common/utils/schema.helpers';
+import { applyBaseSchemaOptions } from 'src/common/utils/mongoose.helpers';
 
 @Schema()
 export class UserModel extends BaseModel {
-  @Prop()
+  @Prop({ unique: true, required: true })
   email: string;
 
-  @Prop()
+  @Prop({
+    required: [true, 'Name is required'],
+    maxLength: [3, 'Name must be at most 3 characters'],
+  })
   name: string;
 
   @Prop()
@@ -22,7 +25,7 @@ export type UserDocument = HydratedDocument<UserModel>;
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);
 
-UserSchema.index({ email: 1 });
+// UserSchema.index({ email: 1 });
 
 UserSchema.virtual('age').get(function () {
   const today = new Date();

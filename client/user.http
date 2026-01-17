@@ -6,7 +6,7 @@ Content-Type: application/json
 
 {
     "email" : "tejas@gmail.com",
-    "name" : "Tejas",
+    "name" : "Tej",
     "dob" : "2001-01-01"
 }
 
@@ -24,7 +24,7 @@ Content-Type: application/json
 GET {{baseUrl}} HTTP/1.1
 
 ### Get one user
-GET {{baseUrl}}/69676b2dffe021e70e8f28f6 HTTP/1.1
+GET {{baseUrl}}/696af180fd052461e4426b84 HTTP/1.1
 
 ### Delete one user
 DELETE  {{baseUrl}}/696ae4132e7346fbfc4997f5 HTTP/1.1
