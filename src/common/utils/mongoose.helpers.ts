@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import { BaseSchemaOptions } from '../types/mongoose.type';
 
 const defaultTransform = ((_doc: any, ret: any) => {
+  delete ret.__v;
+
   if (ret?._id) {
     ret.id = ret._id.toString();
     delete ret._id;

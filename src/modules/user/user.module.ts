@@ -4,12 +4,13 @@ import { UserController } from './user.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { USER_MODEL } from 'src/common/constants/model-names.constant';
 import { UserSchema } from './schema/user.schema';
+import { TransactionService } from 'src/common/services/transaction.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: USER_MODEL, schema: UserSchema }]),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, TransactionService],
 })
 export class UserModule { }

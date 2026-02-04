@@ -1,24 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import {
+    CreateOptions,
     DeleteResult,
     Model,
+    MongooseBaseQueryOptions,
+    MongooseBulkWriteOptions,
+    MongooseUpdateQueryOptions,
     ProjectionType,
     QueryFilter,
     QueryOptions,
     UpdateResult,
 } from 'mongoose';
+import { RequireSession, } from './transaction.service';
 
 @Injectable()
 export abstract class BaseRepository<T> {
     constructor(protected readonly model: Model<T>) { }
 
-    async create(data: Partial<T>): Promise<T> {
-        return await this.model.create(data);
+    @RequireSession()
+    async create(
+        data: Partial<T>,
+        options?: CreateOptions,
+    ): Promise<T> {
+        const [doc] = await this.model.create([data as any], options);
+        return doc;
     }
 
-    async createMany(dataArray: Partial<T>[]): Promise<T[]> {
-        const createdDocs = await this.model.insertMany(dataArray);
-        return createdDocs.map((doc) => this.model.hydrate(doc));
+    @RequireSession()
+    async createMany(dataArray: Partial<T>[], options?: CreateOptions): Promise<T[]> {
+        return await this.model.create(dataArray as any[], options);
     }
 
     async findOne(
@@ -42,6 +52,7 @@ export abstract class BaseRepository<T> {
         return !!result;
     }
 
+    @RequireSession()
     async findOneAndUpdate(
         conditions: QueryFilter<T>,
         data: Partial<T>,
@@ -52,53 +63,64 @@ export abstract class BaseRepository<T> {
             .exec();
     }
 
-
+    @RequireSession()
     async updateOne(
         conditions: QueryFilter<T>,
         data: Partial<T>,
+        options?: MongooseUpdateQueryOptions
     ): Promise<UpdateResult> {
-        return await this.model.updateOne(conditions, data).exec();
+        return await this.model.updateOne(conditions, data, options).exec();
     }
 
+    @RequireSession()
     async updateMany(
         conditions: QueryFilter<T>,
         data: Partial<T>,
+        options?: MongooseUpdateQueryOptions
     ): Promise<UpdateResult> {
-        return await this.model.updateMany(conditions, data).exec();
+        return await this.model.updateMany(conditions, data, options).exec();
     }
 
-    async deleteOne(conditions: QueryFilter<T>): Promise<DeleteResult> {
-        return await this.model.deleteOne(conditions).exec();
+    @RequireSession()
+    async deleteOne(conditions: QueryFilter<T>, options?: MongooseBaseQueryOptions<T>): Promise<DeleteResult> {
+        return await this.model.deleteOne(conditions, options).exec();
     }
 
-    async deleteMany(conditions: QueryFilter<T>): Promise<DeleteResult> {
-        return await this.model.deleteMany(conditions).exec();
+    @RequireSession()
+    async deleteMany(conditions: QueryFilter<T>, options?: MongooseBaseQueryOptions<T>): Promise<DeleteResult> {
+        return await this.model.deleteMany(conditions, options).exec();
     }
 
-    async findOneAndDelete(conditions: QueryFilter<T>): Promise<T | null> {
-        return await this.model.findOneAndDelete(conditions).exec();
+    @RequireSession()
+    async findOneAndDelete(conditions: QueryFilter<T>, options?: MongooseBaseQueryOptions<T>): Promise<T | null> {
+        return await this.model.findOneAndDelete(conditions, options).exec();
     }
 
+    @RequireSession()
     async upsert(
         conditions: QueryFilter<T>,
         data: Partial<T>,
+        options?: MongooseUpdateQueryOptions
     ): Promise<T | null> {
         return await this.model
             .findOneAndUpdate(conditions, data, {
                 new: true,
                 upsert: true,
+                ...options
             })
             .exec();
     }
 
+    @RequireSession()
     async bulkWrite(
         operations: Array<{
             insertOne?: { document: Partial<T> };
             updateOne?: { filter: QueryFilter<T>; update: Partial<T> };
             deleteOne?: { filter: QueryFilter<T> };
         }>,
+        options?: MongooseBulkWriteOptions
     ): Promise<any> {
-        return await this.model.bulkWrite(operations as any);
+        return await this.model.bulkWrite(operations as any, options);
     }
 
 }
