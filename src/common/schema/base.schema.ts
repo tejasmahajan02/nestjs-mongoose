@@ -7,5 +7,5 @@ export abstract class BaseModel {
   // These fields are automatically added and managed by Mongoose.
 
   @Prop({ type: Date, required: false, default: null, index: true })
-  deletedAt: Date | null;
+  deletedAt: Date | null = null;
 }
